@@ -3,73 +3,377 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Accidental Intelligence Inc</title>
-<meta name="description" content="Accidental Intelligence Inc — the company behind Desker.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23161616'/%3E%3Ctext x='50' y='68' font-size='58' font-family='system-ui,sans-serif' font-weight='700' fill='%23eaeaea' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
-<meta property="og:title" content="Accidental Intelligence Inc">
-<meta property="og:description" content="The company behind Desker.">
-<meta name="theme-color" content="#0e0e0e">
+<title>Accidental Intelligence Tech Labs</title>
+<meta name="description" content="Software and the visual work that carries it. Makers of Desker, the Windows desktop organizer, and Foot Traffic, a photo and video studio in Montréal.">
+<link rel="canonical" href="https://accidentalintelligenceinc.com/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#121212">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://accidentalintelligenceinc.com/">
+<meta property="og:title" content="Accidental Intelligence Tech Labs">
+<meta property="og:description" content="Seriously functional. Software and the visual work that carries it.">
+<meta property="og:image" content="https://accidentalintelligenceinc.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Accidental Intelligence Tech Labs — Seriously functional.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://accidentalintelligenceinc.com/og.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0e0e0e;
-    --fg: #eaeaea;
-    --muted: #8a8a8a;
-    --accent: #eaeaea;
+    --coal: #121212;
+    --coal-lift: #1B1B1B;
+    --coal-line: #2B2B2B;
+    --bone: #F2F1EC;
+    --bone-dim: #C9C7BE;
+    --bone-faint: #9C9A90;
+    --green: #8BC53F;
+    --plum: #C083C6;
+    --cream: #FAFAF7;
+    --cream-ink: #1A1A1A;
+    --cream-muted: #6B6558;
+    --eo: cubic-bezier(0.23, 1, 0.32, 1);
+    --eio: cubic-bezier(0.77, 0, 0.175, 1);
+    --gut: clamp(24px, 4.4vw, 64px);
   }
   * { box-sizing: border-box; }
-  html, body {
-    height: 100%;
-    margin: 0;
-  }
+  html { scroll-behavior: smooth; }
   body {
-    background: var(--bg);
-    color: var(--fg);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
+    margin: 0;
+    background: var(--coal);
+    color: var(--bone);
+    font-family: 'Barlow', 'Segoe UI', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
-  main {
-    max-width: 480px;
-    text-align: center;
+  .cond { font-family: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif; }
+  p { margin: 0; }
+  a { color: var(--bone); text-decoration: none; }
+  img, svg { display: block; }
+  .wrap { max-width: 1440px; margin: 0 auto; padding-left: var(--gut); padding-right: var(--gut); }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
   }
-  h1 {
-    font-size: clamp(1.75rem, 5vw, 2.5rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin: 0 0 12px;
+  a.skip {
+    position: absolute; left: 8px; top: -60px; z-index: 20;
+    background: var(--green); color: var(--coal); padding: 12px 18px;
+    font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    transition: top .15s var(--eo);
   }
-  p {
-    color: var(--muted);
-    font-size: 1.05rem;
-    line-height: 1.5;
-    margin: 0 0 32px;
+  a.skip:focus { top: 8px; }
+  :focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+
+  /* ---- signage components ---- */
+  h2.tag, .tag {
+    font-size: 13px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--green); margin: 0;
   }
-  a.cta {
-    display: inline-block;
-    color: var(--bg);
-    background: var(--accent);
-    text-decoration: none;
-    font-weight: 600;
-    padding: 12px 24px;
-    border-radius: 8px;
-    transition: opacity 0.15s ease;
+  a.btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    font-size: 15px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--coal); background: var(--green);
+    padding: 15px 28px; min-height: 48px; line-height: 1; white-space: nowrap;
+    transition: background-color .15s ease, color .15s ease;
   }
-  a.cta:hover { opacity: 0.85; }
-  footer {
-    margin-top: 48px;
-    color: var(--muted);
-    font-size: 0.8rem;
+  .link {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 14px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    min-height: 44px; line-height: 1;
+    transition: color .15s ease;
+  }
+  a.btn svg, .link svg { flex-shrink: 0; transition: transform .15s var(--eo); }
+  .chip {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--bone-faint); border: 1px solid var(--coal-line); padding: 10px 14px;
+  }
+  .stripe { height: 8px; width: 100%; overflow: hidden; position: relative; }
+  .stripe-run {
+    position: absolute; inset: 0 auto 0 0; height: 100%; width: calc(100% + 40px);
+    background: repeating-linear-gradient(-45deg, var(--green) 0, var(--green) 14px, var(--coal) 14px, var(--coal) 28px);
+    animation: conveyor 1.4s linear infinite;
+  }
+  @keyframes conveyor { to { transform: translateX(-39.6px); } }
+
+  /* ---- masthead ---- */
+  .masthead { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 26px; padding-bottom: 26px; }
+  .mark { display: flex; align-items: center; gap: 12px; }
+  .mark .glyph { width: 36px; height: 34px; flex-shrink: 0; }
+  .mark .words { display: flex; flex-direction: column; gap: 2px; line-height: 1; }
+  .mark .n1 { font-size: 12px; font-weight: 700; letter-spacing: 0.05em; }
+  .mark .n2 { font-size: 9px; font-weight: 700; letter-spacing: 0.16em; color: var(--green); }
+  .masthead .link { border: 1px solid var(--coal-line); padding: 0 18px; }
+
+  /* ---- hero ---- */
+  .hero { position: relative; display: flex; flex-direction: column; padding-top: 76px; padding-bottom: 56px; }
+  .hero-mascot { position: absolute; right: var(--gut); top: 40px; width: min(360px, 27vw); height: auto; z-index: 2; transform: rotate(-6deg); }
+  .hero h1 {
+    position: relative; z-index: 1; margin: 0;
+    font-size: clamp(56px, 15.2vw, 218px); font-weight: 700; line-height: 0.85;
+    letter-spacing: 0.005em; text-transform: uppercase;
+  }
+  .hero h1 > span { display: block; }
+  .hero h1 .fun { display: inline; color: var(--green); }
+  .hero-meta { display: flex; align-items: flex-start; justify-content: space-between; gap: 48px; margin-top: 56px; }
+  .hero-copy { display: flex; flex-direction: column; gap: 32px; max-width: 460px; }
+  .hero-copy p { font-size: 18px; line-height: 1.5; color: var(--bone-dim); text-wrap: pretty; }
+  .hero-chip { width: min(360px, 27vw); display: flex; justify-content: center; align-items: flex-start; }
+  .hero-cue { display: flex; justify-content: flex-end; margin-top: 36px; }
+  .cue {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--bone-faint);
+  }
+  .cue-arrow { animation: cue 1.8s var(--eio) infinite; }
+  @keyframes cue { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+
+  /* ---- sections ---- */
+  .sec { padding-top: 96px; }
+  .prose { font-size: 19px; line-height: 1.55; color: #E8E6DF; max-width: 780px; margin-top: 26px; }
+  .cards { display: flex; gap: 24px; margin-top: 38px; }
+  .card { padding: 46px; display: flex; flex-direction: column; gap: 24px; }
+  .card-desker { flex: 1 1 60%; background: var(--coal-lift); border: 1px solid var(--coal-line); }
+  .card-ft { flex: 1 1 40%; background: var(--cream); }
+  .card h3 { font-size: clamp(40px, 4vw, 52px); font-weight: 700; text-transform: uppercase; margin: 0 0 16px; line-height: 1; }
+  .card p { font-size: 16px; line-height: 1.55; max-width: 480px; }
+  .card-desker h3 { color: var(--bone); }
+  .card-desker p { color: var(--bone-dim); }
+  .card-ft h3 { color: var(--cream-ink); }
+  .card-ft p { color: var(--cream-muted); }
+  .card-body { flex: 1 1 auto; }
+  .link-plum { color: var(--plum); }
+
+  .outro { padding-top: 110px; padding-bottom: 110px; text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: center; }
+  .outro h2 { font-size: clamp(32px, 4vw, 44px); font-weight: 700; text-transform: uppercase; line-height: 1; margin: 0; }
+  .outro p { font-size: 15px; color: var(--bone-faint); }
+
+  /* ---- colophon ---- */
+  .colophon { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding-top: 28px; padding-bottom: 28px; }
+  .colophon .who { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--bone-dim); }
+  .colophon nav { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+  .colophon nav a { font-size: 13px; min-height: 44px; display: inline-flex; align-items: center; transition: color .15s ease; }
+
+  /* ---- motion ---- */
+  .hl { animation: rise .6s var(--eo) both; }
+  .hl:nth-child(2) { animation-delay: .07s; }
+  .hl:nth-child(3) { animation-delay: .14s; }
+  .hero-mascot { animation: mascot-in .7s var(--eo) .25s both; }
+  .hero-meta, .hero-cue { animation: rise-sm .6s var(--eo) .38s both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes rise-sm { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes mascot-in {
+    0% { opacity: 0; transform: rotate(1deg) translateY(-10px); }
+    70% { opacity: 1; transform: rotate(-7deg) translateY(0); }
+    100% { opacity: 1; transform: rotate(-6deg) translateY(0); }
+  }
+  /* Reveals are opt-in: only hidden once JS confirms it can reveal them again. */
+  .js-reveal [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity .5s var(--eo), transform .5s var(--eo); }
+  .js-reveal [data-reveal].inview { opacity: 1; transform: translateY(0); }
+  .js-reveal [data-reveal="late"] { transition-delay: .09s; }
+
+  @media (hover: hover) and (pointer: fine) {
+    a:hover { color: var(--green); }
+    a.btn:hover { background: var(--bone); color: var(--coal); }
+    a.btn:hover svg, .link:hover svg { transform: translateX(3px); }
+    a.link-plum:hover { color: var(--bone); }
+  }
+
+  /* ---- narrow ---- */
+  @media (max-width: 900px) {
+    .hero { padding-top: 40px; padding-bottom: 48px; gap: 28px; }
+    .hero-mascot { position: static; order: -1; width: min(200px, 52vw); align-self: center; }
+    .hero h1 { font-size: clamp(40px, 16.3vw, 96px); }
+    .hero-meta { flex-direction: column; gap: 28px; margin-top: 0; }
+    .hero-copy { gap: 24px; max-width: none; }
+    .hero-copy p { font-size: 16px; }
+    .hero-copy a.btn { width: 100%; }
+    .hero-chip { width: auto; justify-content: flex-start; }
+    .hero-cue { display: none; }
+    .sec { padding-top: 56px; }
+    .prose { font-size: 16px; line-height: 1.6; margin-top: 20px; }
+    .cards { flex-direction: column; }
+    .card { padding: 28px; gap: 20px; }
+    .card p { font-size: 15px; }
+    .outro { padding-top: 64px; padding-bottom: 64px; }
+    .colophon { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .colophon nav { flex-direction: column; align-items: flex-start; gap: 4px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .hl, .hero-mascot, .hero-meta, .hero-cue { animation: none; }
+    .stripe-run, .cue-arrow { animation: none; }
+    .js-reveal [data-reveal] { transform: none; transition: opacity .25s ease; }
   }
 </style>
+<script>
+  /* Arm scroll reveals only when we can actually un-hide them again. */
+  (function (d) {
+    if ('IntersectionObserver' in window &&
+        !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+      d.documentElement.className += ' js-reveal';
+    }
+  })(document);
+</script>
 </head>
 <body>
-<main>
-  <h1>Accidental Intelligence Inc</h1>
-  <p>We make software. First up: Desker — organize your Windows desktop into live panels and icon zones.</p>
-  <a class="cta" href="/desker/">See Desker →</a>
-  <footer>&copy; 2026 Accidental Intelligence Inc</footer>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+  <symbol id="mascot" viewBox="0 0 200 190">
+    <path d="M108 30 L170 152 Q178 168 160 168 L40 168 Q22 168 30 152 L92 30 Q100 14 108 30 Z" fill="#FFFFFF" stroke="#121212" stroke-width="15" stroke-linejoin="round"/>
+    <path d="M107 54 L153 136 Q160 148 146 148 L54 148 Q40 148 47 136 L93 54 Q100 42 107 54 Z" fill="#8BC53F"/>
+    <rect x="93" y="62" width="14" height="26" rx="7" fill="#121212"/>
+    <circle cx="100" cy="100" r="7" fill="#121212"/>
+    <rect x="88" y="108" width="24" height="46" rx="12" fill="#FFFFFF" stroke="#121212" stroke-width="4.5"/>
+    <rect x="58" y="116" width="84" height="14" rx="7" fill="#121212"/>
+  </symbol>
+  <symbol id="arrow-r" viewBox="0 0 14 10">
+    <path d="M0.5 5H13M13 5L9 1M13 5L9 9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+</svg>
+
+<header class="wrap masthead">
+  <div class="mark">
+    <svg class="glyph" aria-hidden="true" focusable="false"><use href="#mascot"/></svg>
+    <span class="words">
+      <span class="n1">ACCIDENTAL INTELLIGENCE</span>
+      <span class="n2">TECH LABS</span>
+    </span>
+  </div>
+  <a class="link" href="/desker/">
+    Desker
+    <svg width="14" height="10" aria-hidden="true" focusable="false"><use href="#arrow-r"/></svg>
+  </a>
+</header>
+
+<div class="stripe" aria-hidden="true"><div class="stripe-run"></div></div>
+
+<main id="main">
+
+  <section class="wrap hero">
+    <svg class="hero-mascot" viewBox="0 0 200 190" aria-hidden="true" focusable="false"><use href="#mascot"/></svg>
+    <h1 class="cond">
+      <span class="hl">Seriously</span> <span class="hl"><span class="fun">fun</span>ctional.</span>
+    </h1>
+    <div class="hero-meta">
+      <div class="hero-copy">
+        <p>Software and the visual work that carries it. Serious craft, unserious attitude.</p>
+        <div>
+          <a class="btn" href="/desker/">
+            Meet Desker
+            <svg width="14" height="10" aria-hidden="true" focusable="false"><use href="#arrow-r"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="hero-chip">
+        <span class="chip">Caution: opinionated software.</span>
+      </div>
+    </div>
+    <div class="hero-cue" aria-hidden="true">
+      <span class="cue">
+        Scroll
+        <svg class="cue-arrow" width="10" height="14" viewBox="0 0 10 14" fill="none"><path d="M5 0.5V13M5 13L1 9M5 13L9 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </div>
+  </section>
+
+  <section class="wrap sec" data-reveal aria-labelledby="about-h">
+    <h2 class="tag" id="about-h">[ 01 &mdash; Who we are ]</h2>
+    <p class="prose">
+      Accidental Intelligence Tech Labs builds software and content for people who expect things to work. The name is a joke about how projects start &mdash; not about how they get finished. Desker is native Rust on raw Win32: no Electron, no telemetry, no subscription. Foot Traffic makes photo and video that small businesses actually get results from. Two kinds of work, one standard: make it functional, then make it worth using.
+    </p>
+  </section>
+
+  <section class="wrap sec" aria-labelledby="work-h">
+    <h2 class="tag" id="work-h">[ 02 &mdash; What we build ]</h2>
+    <div class="cards">
+
+      <article class="card card-desker" data-reveal>
+        <svg width="52" height="49" viewBox="-1 -1 14 13" shape-rendering="crispEdges" aria-hidden="true" focusable="false">
+          <path fill="#C083C6" d="M0 0h12v1H0zM0 8h12v1H0zM0 1h1v7H0zM11 1h1v7h-1z"/>
+          <rect x="1" y="1" width="10" height="7" fill="#121212"/>
+          <path fill="#C083C6" d="M4 2h1v5H4zM5 2h2v1H5zM5 6h2v1H5zM7 3h1v3H7zM5 9h2v1H5zM3 10h6v1H3z"/>
+        </svg>
+        <div class="card-body">
+          <h3 class="cond">Desker</h3>
+          <p>Turns your Windows desktop into live folder panels and organized icon zones. One-time purchase, no subscriptions, no telemetry, no bullshit &mdash; Desker's whole personality in one sentence.</p>
+        </div>
+        <div>
+          <a class="link link-plum" href="/desker/">
+            Visit Desker
+            <svg width="14" height="10" aria-hidden="true" focusable="false"><use href="#arrow-r"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <article class="card card-ft" data-reveal="late">
+        <img src="/foot-traffic-logo.png" alt="Foot Traffic Co." width="150" height="150" style="width:150px;height:auto" loading="lazy" decoding="async">
+        <div class="card-body">
+          <h3 class="cond">Foot Traffic</h3>
+          <p>Photo and video for small businesses &mdash; restaurants, studios, shops. Based in Montr&eacute;al.</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="wrap outro" data-reveal>
+    <h2 class="cond">More is already in motion.</h2>
+    <p>You'll know when it's ready.</p>
+  </section>
+
 </main>
+
+<div class="stripe" aria-hidden="true"><div class="stripe-run"></div></div>
+
+<footer class="wrap colophon">
+  <div class="who">
+    <svg width="22" height="21" aria-hidden="true" focusable="false"><use href="#mascot"/></svg>
+    <span>&copy; 2026 Accidental Intelligence Tech Labs</span>
+  </div>
+  <nav aria-label="Footer">
+    <a href="/desker/">Desker</a>
+    <a href="https://instagram.com/accidentalintelligenceinc" rel="me noopener">Instagram</a>
+    <a href="mailto:hello@accidentalintelligenceinc.com">hello@accidentalintelligenceinc.com</a>
+  </nav>
+</footer>
+
+<script>
+  (function () {
+    var els = Array.prototype.slice.call(document.querySelectorAll('[data-reveal]'));
+    if (!els.length) return;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.classList.add('inview'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('inview');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Accidental Intelligence Tech Labs",
+  "url": "https://accidentalintelligenceinc.com/",
+  "logo": "https://accidentalintelligenceinc.com/favicon.svg",
+  "description": "Software and the visual work that carries it. Serious craft, unserious attitude.",
+  "email": "hello@accidentalintelligenceinc.com",
+  "sameAs": ["https://instagram.com/accidentalintelligenceinc"]
+}
+</script>
+
 </body>
 </html>
