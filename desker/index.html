@@ -13,6 +13,9 @@
 <link rel="icon" type="image/png" href="logo.png">
 <script>try{var t=localStorage.getItem('desker-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <script>document.documentElement.classList.add('js')</script>
+<!-- Arm scroll reveals pre-paint, and only when we can actually undo the hiding:
+     no IntersectionObserver, or reduced motion, => content is never hidden. -->
+<script>if('IntersectionObserver' in window&&!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches))document.documentElement.classList.add('js-reveal')</script>
 <link rel="apple-touch-icon" href="logo.png">
 <!-- Open Graph / social -->
 <meta property="og:type" content="website">
@@ -510,9 +513,24 @@ a:focus-visible,.btn:focus-visible,button:focus-visible,summary:focus-visible,.n
   .fsec.flip .frow{direction:ltr}
   .fvis{order:-1}
 }
-@media(prefers-reduced-motion:reduce){
-  .fshot *{animation:none!important;transition:none!important}
+/* ── scroll reveals ──
+   A11Y.md §3 Motion + guide-media.md §5: the reduced-motion path is the
+   DEFAULT; motion is only added inside the no-preference branch, so with the
+   preference set the sections are already in their final readable state.
+   The hiding is additionally gated on `html.js-reveal`, which an inline
+   pre-paint script only sets once it has confirmed it can undo it — script
+   blocked, late or broken therefore renders the content normally
+   (A11Y.md §6 "Content Held Hostage by JavaScript"). */
+@media(prefers-reduced-motion:no-preference){
+  html.js-reveal [data-reveal]{opacity:0;transform:translateY(18px);
+    transition:opacity .55s cubic-bezier(.23,1,.32,1),transform .55s cubic-bezier(.23,1,.32,1)}
+  html.js-reveal [data-reveal].inview{opacity:1;transform:none}
+  html.js-reveal [data-reveal="late"]{transition-delay:.1s}
+  html.js-reveal [data-reveal="later"]{transition-delay:.2s}
 }
+/* Lenis owns scrollTop while active; native smooth scrolling fights it. */
+html.lenis-on{scroll-behavior:auto}
+html.lenis-on body{overscroll-behavior:none}
 </style>
 </head>
 <body>
@@ -611,7 +629,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible,summary:focus-visible,.n
 
 <!-- 01 · Desktop-icon zones -->
 <section class="fsec" id="f-zones"><div class="wrap frow">
-  <div class="ftext">
+  <div class="ftext" data-reveal>
     <span class="fnum">01 · Desktop-icon zones</span>
     <h2>The one thing free tools can't touch.</h2>
     <p class="sub">Draw a zone anywhere on the desktop and Desker snaps the icons inside it into a clean, labeled grid. Your desktop stops being a junk drawer — without moving a single file.</p>
@@ -622,7 +640,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible,summary:focus-visible,.n
     </ul>
     <a class="btn btn-g" href="#download">Get early access — free</a>
   </div>
-  <div class="fvis">
+  <div class="fvis" data-reveal="late">
     <div class="fshot sc-zones" role="img" aria-label="A desktop area with two loose icons above a dashed, labeled zone that holds icons snapped into a tidy grid.">
       <div class="loose l1"><span class="ico g"></span><span class="lbl"></span></div>
       <div class="loose l2"><span class="ico b"></span><span class="lbl"></span></div>
@@ -645,7 +663,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible,summary:focus-visible,.n
 
 <!-- 02 · Live folder panels -->
 <section class="fsec flip" id="f-panels"><div class="wrap frow">
-  <div class="ftext">
+  <div class="ftext" data-reveal>
     <span class="fnum">02 · Live folder panels</span>
     <h2>Your folders, living on the desktop.</h2>
     <p class="sub">Drop a folder onto the desktop and it becomes a translucent, always-live panel. Contents update in real time — open, drag and drop like a window that never gets in the way.</p>
@@ -656,7 +674,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible,summary:focus-visible,.n
     </ul>
     <a class="btn btn-g" href="#download">Get early access — free</a>
   </div>
-  <div class="fvis">
+  <div class="fvis" data-reveal="late">
     <div class="fshot sc-panels" role="img" aria-label="Two translucent Desker panels floating on a desktop: a Projects folder panel showing a grid of file icons, and a Notes panel with lines of text.">
       <div class="panel p-a"><div class="pt">Projects</div><div class="igrid" style="--c:4"><span class="ico"></span><span class="ico b"></span><span class="ico g"></span><span class="ico"></span><span class="ico g"></span><span class="ico"></span><span class="ico b"></span><span class="ico g"></span></div></div>
       <div class="panel p-b"><div class="pt">Notes</div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
@@ -667,7 +685,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible,summary:focus-visible,.n
 
 <!-- 03 · Widget ecosystem -->
 <section class="fsec" id="f-widgets"><div class="wrap frow">
-  <div class="ftext">
+  <div class="ftext" data-reveal>
     <span class="fnum">03 · Widget ecosystem</span>
     <h2>A dozen widgets, none of them bloat.</h2>
     <p class="sub">Notes, to-do, timers, clocks, calendars, system monitors, quick-launch, bookmarks, recent files, clipboard history. Add what you use, ignore what you don't — the whole app is still about 4 MB.</p>
@@ -678,7 +696,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible,summary:focus-visible,.n
     </ul>
     <a class="btn btn-g" href="#download">Get early access — free</a>
   </div>
-  <div class="fvis">
+  <div class="fvis" data-reveal="late">
     <div class="fshot sc-widgets" role="img" aria-label="Three Desker widgets side by side: a clock, a notes list and a system monitor.">
       <div class="panel"><div class="pt">Clock</div><div class="big">21:04</div><div class="sm">Sat · Jul 18</div></div>
       <div class="panel"><div class="pt">Notes</div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
@@ -690,7 +708,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible,summary:focus-visible,.n
 
 <!-- 04 · Media on the desktop -->
 <section class="fsec flip" id="f-media"><div class="wrap frow">
-  <div class="ftext">
+  <div class="ftext" data-reveal>
     <span class="fnum">04 · Media on the desktop</span>
     <h2>Photos and video, right where you left them.</h2>
     <p class="sub">Images, GIFs and video play natively inside a panel. Slideshow mode cycles a folder on its own, so a shoot folder or a wallpaper set lives on the desktop without opening a viewer.</p>
@@ -700,7 +718,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible,summary:focus-visible,.n
     </ul>
     <a class="btn btn-g" href="#download">Get early access — free</a>
   </div>
-  <div class="fvis">
+  <div class="fvis" data-reveal="late">
     <div class="fshot sc-media" role="img" aria-label="A Desker media panel showing a row of photo thumbnails, with a small clock widget beside it.">
       <div class="panel p-med"><div class="pt">Shoot · July</div><div class="strip"><span class="tile"></span><span class="tile"></span><span class="tile"></span></div></div>
       <div class="panel p-clock2"><div class="pt">Clock</div><div class="big">21:04</div></div>
@@ -711,7 +729,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible,summary:focus-visible,.n
 
 <!-- 05 · Built to fit your setup -->
 <section class="fsec" id="f-fit"><div class="wrap frow">
-  <div class="ftext">
+  <div class="ftext" data-reveal>
     <span class="fnum">05 · Built to fit your setup</span>
     <h2>Two monitors, three, or one small laptop.</h2>
     <p class="sub">Layout profiles remember where your panels belong per monitor arrangement, so unplugging a dock doesn't scatter your desktop. Dock-to-edge keeps panels out of the way until you want them.</p>
@@ -722,7 +740,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible,summary:focus-visible,.n
     </ul>
     <a class="btn btn-g" href="#download">Get early access — free</a>
   </div>
-  <div class="fvis">
+  <div class="fvis" data-reveal="late">
     <div class="fshot sc-fit" role="img" aria-label="A wide monitor and a smaller portrait monitor side by side, each showing Desker panels arranged to fit.">
       <div class="mon m1"><div class="bar"></div><div class="blk tall"></div><div class="blk"></div><div class="blk"></div><span class="foot-lbl">Desk</span></div>
       <div class="mon m2"><div class="bar"></div><div class="blk"></div><div class="blk tall"></div><span class="foot-lbl">Laptop</span></div>
@@ -733,7 +751,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible,summary:focus-visible,.n
 
 <!-- 06 · Deep personalization -->
 <section class="fsec flip" id="f-theme"><div class="wrap frow">
-  <div class="ftext">
+  <div class="ftext" data-reveal>
     <span class="fnum">06 · Deep personalization</span>
     <h2>Make it look like yours.</h2>
     <p class="sub">Frosted glass or lightweight rendering, panel shapes, blur, transparency, fonts, borders, themes and accent colours. Desker should disappear into your desktop, not fight it.</p>
@@ -744,7 +762,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible,summary:focus-visible,.n
     </ul>
     <a class="btn btn-g" href="#download">Get early access — free</a>
   </div>
-  <div class="fvis">
+  <div class="fvis" data-reveal="late">
     <div class="fshot sc-theme" role="img" aria-label="Three versions of the same Desker panel shown side by side in frosted, solid and accented styles.">
       <div class="sw frost"><div class="cap">Frosted</div><div class="row"><i></i><i></i></div></div>
       <div class="sw solid a2"><div class="cap">Solid</div><div class="row"><i></i><i></i></div></div>
@@ -1072,6 +1090,103 @@ a:focus-visible,.btn:focus-visible,button:focus-visible,summary:focus-visible,.n
     clearTimeout(rt);
     rt=setTimeout(function(){if(!shot.classList.contains('tracking'))restCursor()},150);
   });
+})();
+</script>
+
+<script>
+/* Scroll reveals. The observer only ADDS the animation — the content is in the
+   DOM and readable without it (A11Y.md §6 / guide-loading-skeleton.md).
+
+   guide-loading-skeleton.md's own test is "JS enabled but throttled to a crawl:
+   at no point may the page be blank while its content sits in the DOM". An
+   IntersectionObserver that never delivers (throttled, background-rendered, or
+   simply broken) would do exactly that, so there are two backstops below:
+   a viewport sweep on load / on becoming visible, and a hard release if the
+   observer has produced nothing at all. */
+(function(){
+  var els=Array.prototype.slice.call(document.querySelectorAll('[data-reveal]'));
+  if(!els.length)return;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce||!('IntersectionObserver' in window)){
+    els.forEach(function(el){el.classList.add('inview')});
+    return;
+  }
+  var delivered=false;
+  var io=new IntersectionObserver(function(entries){
+    delivered=true;
+    entries.forEach(function(en){
+      if(en.isIntersecting){en.target.classList.add('inview');io.unobserve(en.target)}
+    });
+  },{threshold:.12,rootMargin:'0px 0px -50px 0px'});
+  els.forEach(function(el){io.observe(el)});
+
+  function show(el){if(!el.classList.contains('inview')){el.classList.add('inview');io.unobserve(el)}}
+  function sweep(){
+    var vh=window.innerHeight||0;
+    els.forEach(function(el){
+      var r=el.getBoundingClientRect();
+      if(r.top<vh&&r.bottom>0)show(el);
+    });
+  }
+  function release(){if(!delivered)els.forEach(show)}
+
+  addEventListener('load',function(){sweep();setTimeout(release,2000)});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)sweep()});
+})();
+</script>
+
+<script src="/lenis.min.js" defer></script>
+<script defer>
+/* Lenis smooth scroll — self-hosted, no CDN (this site makes no third-party
+   requests, matching the product's own no-telemetry promise).
+
+   Accessibility contract (A11Y.md §3 Motion / guide-media.md §5):
+   scroll-driven motion is a vestibular trigger, so Lenis stays OFF unless
+   `prefers-reduced-motion: no-preference`, and stops live if the preference
+   changes. Lenis owns scrollTop, which breaks two things the browser does for
+   free — focus scrolling and in-page anchors — so both are restored here. */
+(function(){
+  var mq=window.matchMedia('(prefers-reduced-motion: reduce)');
+  var root=document.documentElement,lenis=null,rafId=0;
+
+  function start(){
+    if(lenis||mq.matches||typeof Lenis==='undefined')return;
+    lenis=new Lenis({duration:1.05,smoothWheel:true,smoothTouch:false});
+    root.classList.add('lenis-on');
+    (function raf(t){if(!lenis)return;lenis.raf(t);rafId=requestAnimationFrame(raf)})(0);
+  }
+  function stop(){
+    if(!lenis)return;
+    cancelAnimationFrame(rafId);lenis.destroy();lenis=null;
+    root.classList.remove('lenis-on');
+  }
+  function sync(){mq.matches?stop():start()}
+
+  /* Keep focus visible: tabbing to an off-screen control must scroll it in
+     (SC 2.4.7). The sticky header is 60px, so offset clears it. */
+  document.addEventListener('focusin',function(e){
+    if(!lenis)return;
+    var el=e.target;if(!el||!el.getBoundingClientRect)return;
+    var r=el.getBoundingClientRect();
+    if(r.top<76||r.bottom>(window.innerHeight||0))lenis.scrollTo(el,{offset:-90,immediate:true});
+  });
+
+  /* Anchors must move FOCUS as well as scroll, or keyboard users are scrolled
+     somewhere their focus has not followed. Also makes the skip link work. */
+  document.addEventListener('click',function(e){
+    var a=e.target&&e.target.closest?e.target.closest('a[href^="#"]'):null;
+    if(!a)return;
+    var id=a.getAttribute('href');if(!id||id==='#')return;
+    var target=document.querySelector(id);if(!target)return;
+    if(lenis){e.preventDefault();lenis.scrollTo(target,{offset:-70})}
+    if(!target.hasAttribute('tabindex'))target.setAttribute('tabindex','-1');
+    target.focus({preventScroll:true});
+  });
+
+  if(mq.addEventListener)mq.addEventListener('change',sync);
+  else if(mq.addListener)mq.addListener(sync);
+  if(document.readyState==='complete')sync();
+  else window.addEventListener('load',sync);
 })();
 </script>
 </body>

@@ -1,0 +1,68 @@
+# A11y Verification Report
+
+This report compiles the compliance evidence for a given *Feature*, ensuring its development reached the "Certification Ready" definition.
+
+> This report is a **versioned project record** — never add it to `.gitignore`. Evidence hidden from version control is not evidence: QA and leadership verify it before release, and audits read it after.
+
+> **Marking legend (mandatory):**
+> `[x]` verified, with the evidence described beside it · `[!]` verified and **failed** (fix it, or open an entry in `EXCEPTIONS.md`) · `[~]` partially verified, with what is missing written down · `[ ]` **not verified** — the reason MUST be written beside it.
+> Marking `[x]` without reproducible evidence invalidates the whole report.
+
+---
+
+## 📌 Validation Context
+- **Feature/Epic:** Scroll-reveal motion + Lenis smooth scroll across both pages (`/` Accidental Intelligence, `/desker/` Desker)
+- **Test Date:** 2026-08-19
+- **Covers interface as of:** branch `feat/scroll-motion`, working tree at time of writing (parent commit `2c7b064`). **Not yet deployed.**
+- **Compliance Status:** ⚠️ **CONDITIONAL** — capped there by two independent constraints: one accepted SC deviation (`EXCEPTIONS.md` EXT-2026-001), and self-reported verification. It cannot be ✅ PASS in this state.
+- **Verification Independence:** **self-reported ⚠️** — *who verified: Claude Code, in the same session that generated the code.* No second agent and no fresh-context session has audited it. Per §2 (Independent Verification) this is permitted but **capped at CONDITIONAL**. **A fresh-context pass is the floor and has not been done — it costs a new chat over this repo, not a new tool.**
+
+> **Headless agent.** This report was produced without a real browser session or any assistive technology. Every checkpoint requiring a person, a screen reader, or a genuine browser is marked `[ ]` with the reason and who must run it. Programmatic checks were run by driving a Chromium DOM (computed styles, geometry, CSSOM rule inspection) — that is real evidence for layout and CSS questions and **no evidence at all** for perception questions.
+
+## 1. Technical Verification (Automated & Semantics)
+- [ ] **Axe-Core / Lighthouse:** **Not run** — neither engine is available in this environment, and no CI gate exists on the repo. **Who must run it:** Sam, or CI once configured. This is the single biggest gap in this report; every other automated claim below is hand-rolled and narrower than axe.
+- [x] **HTML Semantics:** Verified programmatically on both pages: `div[onclick]`, `span[onclick]`, `div[role=button]`, `span[role=button]` all return **0 matches**. Every interactive element is a native `<a>` (22 on `/desker/`) or `<button>` (2). No ARIA was added where native semantics already exist.
+- [x] **Heading Hierarchy (H1-H6):** No level skips on either page. `/desker/` sequence `1,2,2,2,2,2,2,2,2,2,2,2` — computed by walking every `h1…h6` and asserting no jump greater than +1. `/` was corrected earlier in this work (section labels promoted from `<p>` to `<h2>`, which had produced an h1→h3 skip).
+
+## 2. Tab Order and Focus Management
+- [~] **Focus Indicator:** A `:focus-visible` rule exists and is enforced on both pages (`outline: 2px solid`, offset), confirmed via CSSOM. **Not verified:** the 3:1 contrast of the ring against every background it can appear over (the lime ring sits over coal, plum-tinted panels and the cream Foot Traffic card) — that needs measurement per surface. **Who:** Sam or a fresh-context agent with a contrast tool.
+- [ ] **Logical Navigation:** **Not verified** — requires driving the `Tab` key through a real, visible browser session. This environment's page never composites (`document.visibilityState === "hidden"` throughout), so focus behaviour cannot be exercised honestly. **Who must run it:** Sam. **Specifically worth testing:** Lenis now intercepts `focusin` to scroll off-screen controls into view — that interception is new, unproven by hand, and is exactly the kind of code that can strand focus.
+- [x] **Captured Focus (Modals/Overlays):** N/A — neither page contains a modal, dialog, drawer or overlay. No focus trap exists to leak.
+
+## 3. Behavior and Task Return
+- [ ] **Screen Reader Test:** **Not performed.** An AI cannot run or hear a screen reader, and §5 of `A11Y.md` forbids claiming it did. **Who must run it:** Sam, with at least one named pair. Suggested: **NVDA + Firefox** (free, and the Windows audience matches Desker's). Note `orca-windows-setup.exe` was seen in Downloads — if that is a screen reader being trialled, it is a second pair worth recording.
+  - Pair(s) used: — *(none yet)*
+  - Who ran it and when: — *(pending)*
+- [ ] **Voice Control:** **Not verified.** No `aria-label` on either page replaces visible text (checked: labels are supplied by visible text or by `sr-only` suffixes, not substitutions), which is the usual SC 2.5.3 failure — but confirming every control activates by speaking its visible label needs the platform tool. **Who:** Sam, via Windows Voice Access.
+- [~] **Status Change (`aria-live`):** One live region exists on `/desker/` (`role="status"` on the waitlist note) and is correctly present in the DOM before any message is written to it. **Not verified:** that it actually announces on submit — untestable without a screen reader. Note the waitlist path is still unwired (`WEB3FORMS_ACCESS_KEY` empty), so the success/failure messages it would announce are not yet real.
+- [x] **Form Filling:** Verified programmatically: every non-hidden `<input>` on `/desker/` resolves a label — zero inputs lack `labels`, `aria-label` or `aria-labelledby`. The honeypot checkbox is `display:none` and excluded deliberately.
+
+## 4. Visual Perception and Comprehension
+- [~] **Text & UI Contrast:** Spot-verified during earlier work — the nav "TECH LABS" sub-label was measured at ~3.99:1 and darkened to pass; `#8BC53F` on `#121212` and `#C083C6` on `#1B1B1B` were both checked as passing. **Not verified:** a systematic sweep of every text/background pair introduced by this motion work, and the muted greys on the Desker page under **both** its light and dark themes. **Who:** axe/Lighthouse, or a fresh-context contrast pass.
+- [x] **Redundancy:** No state on either page is conveyed by colour alone. The pages are marketing surfaces with no error/success states beyond the waitlist status message, which is text.
+- [~] **Scale / Zoom:** Reflow verified with **no two-dimensional scrolling**: `/desker/` at a 365px-wide viewport reports `scrollWidth === innerWidth` (365), and `/` was verified at a true 320px with 24px of headroom on the widest headline. **Not verified:** `/desker/` at exactly 320px (this environment clamped the viewport to 365px, so the strict SC 1.4.10 target was not reached on that page), and 200% text-only zoom (SC 1.4.4) on either page. **Who:** Sam, via browser zoom.
+
+## 5. Time-Based Media and Motion
+- [x] **Classification:** N/A for video/audio — **neither page contains any `<video>`, `<audio>` or third-party media embed.** All "product imagery" is CSS/HTML illustration plus one PNG logo. Nothing was classified as decorative by the AI on its own, because there is no media to classify. Motion checkpoints below still apply and are the substance of this report.
+- [x] **Alternatives:** N/A — no captions, transcript or audio description are owed, as there is no time-based media.
+- [!] **Autoplay and Moving Content:** **FAILS SC 2.2.2 (Level A).** Looping decorative animations start automatically, run indefinitely and sit alongside content with **no in-page pause/stop/hide mechanism**: `/` — hazard-stripe conveyor (×2), scroll-cue bounce; `/desker/` — hero panel float loops, cursor breathe/ripple, `#dwave` canvas. Presented to the owner with three conforming remedies; the owner elected to keep them. **Accepted and recorded in `EXCEPTIONS.md` → EXT-2026-001**, severity 🟠 HIGH, expiry **2026-11-19** or Desker launch, whichever is sooner. No audio anywhere (SC 1.4.2 not engaged). Nothing flashes: slowest loop is 1.4s and no animation toggles more than ~1×/s, so SC 2.3.1 is not engaged.
+- [~] **Reduced Motion:** Verified **structurally and reproducibly**, not by running the OS preference. Evidence: CSSOM inspection of both pages enumerated every rule declaring `opacity` on a `[data-reveal]` element and found **exactly one**, whose `conditionText` is `(prefers-reduced-motion: no-preference)` — so with the preference set there is no hiding rule at all and content renders in its final state. All new motion is authored reduced-first per guide-media.md §5. Lenis starts only under `no-preference` and destroys itself on a live preference change. **Not verified:** an actual pass with `prefers-reduced-motion: reduce` active in a real browser, which §7 asks for by name. **Who:** Sam (Windows → Settings → Accessibility → Visual effects → Animation effects off).
+- [x] **Text over Media:** N/A — no text sits over video. The one place text overlays imagery is the hero headline beside the mascot SVG; overlap was measured per line and the headline was resized until the type clears the mark, so no text is composited over a variable surface.
+
+## 6. Cognitive Load and Flow
+- [x] **Nothing to remember:** N/A / satisfied — there is no authentication, no multi-step flow and no time limit on either page. The only input is a single email field on `/desker/`; nothing must be carried between screens, and no CAPTCHA exists.
+- [x] **Nothing to retype:** Satisfied trivially — single-field, single-step form.
+- [x] **Help in the same place:** Contact is in the footer of both pages, in the same relative position.
+- [ ] **Text spacing (SC 1.4.12):** **Not verified.** Requires applying line-height 1.5×, paragraph 2×, letter 0.12× and word 0.16× and confirming nothing clips. Elevated risk here: the hero headlines use `line-height: 0.85`, tight tracking and `clamp()` sizing, which is exactly the shape that clips under forced spacing. **Who:** Sam, via a text-spacing bookmarklet.
+- [x] **Timing:** N/A — no time limits exist on either page.
+- [x] **Conflicting needs:** One conflict arose and was resolved through a user-controlled channel rather than arbitrated silently: motion/vestibular needs vs. the brand's animated identity. The channel is `prefers-reduced-motion`, which fully serves users who set it; users who do not set it remain unserved, and that residual is exactly what EXT-2026-001 records. Choices logged in `A11Y-DECISIONS.md`.
+
+---
+## 📝 Assessment Notes or Known Blockers
+
+- **Note 1 — This report does not certify anything.** It is self-reported by the agent that wrote the code, which §2 caps at CONDITIONAL. The cheapest way to raise the ceiling is a **fresh-context** pass: a new session over this repo, without this conversation, re-running the checkpoints marked `[x]` above.
+- **Note 2 — Two prior deliveries shipped with no report at all.** Commits `0a9c6fd` (company site) and `2c7b064` (Desker restructure) were both deployed to production before this file existed, so **those deployments carry no conformance evidence**. This report is the first, and covers the current branch — not retrospectively those releases.
+- **Note 3 — One accepted SC deviation is live in production right now.** EXT-2026-001 (SC 2.2.2) describes animations already deployed, not just ones on this branch.
+- **Note 4 — A real defect was found and fixed during this work, worth remembering.** The hero entrance animations used `animation-fill-mode: both` with `opacity: 0` in their from-state. Whenever the animation did not advance — throttled tab, print, animation-skipping engine — the fill mode held the hero's sub-copy and **primary CTA invisible**. This was observed, not hypothesised. Fixed by animating transform only; recorded in `A11Y-DECISIONS.md` so future entrance animations inherit the constraint.
+- **Note 5 — Lenis introduces two new obligations that are code-verified but hand-unverified.** Focus scrolling and anchor focus transfer are both implemented, and both are precisely the kind of thing that fails in ways only a keyboard user notices. They are the first thing to test in checkpoint 2.
+- **Note 6 — `A11Y.md` arrived without its `references/` and `templates/` folders.** They were resolved against the upstream repository (`github.com/fecarrico/A11Y.md`) as §2 requires, and only the two rows matching this task were loaded (`guide-loading-skeleton.md`, `guide-media.md`). Vendoring the folders into this repo would make future sessions cheaper and pin the version this project is judged against.

@@ -39,7 +39,8 @@
     --gut: clamp(24px, 4.4vw, 64px);
   }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: auto; }
+  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
   body {
     margin: 0;
     background: var(--coal);
@@ -93,7 +94,6 @@
   .stripe-run {
     position: absolute; inset: 0 auto 0 0; height: 100%; width: calc(100% + 40px);
     background: repeating-linear-gradient(-45deg, var(--green) 0, var(--green) 14px, var(--coal) 14px, var(--coal) 28px);
-    animation: conveyor 1.4s linear infinite;
   }
   @keyframes conveyor { to { transform: translateX(-39.6px); } }
 
@@ -125,7 +125,6 @@
     display: inline-flex; align-items: center; gap: 10px;
     font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--bone-faint);
   }
-  .cue-arrow { animation: cue 1.8s var(--eio) infinite; }
   @keyframes cue { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
 
   /* ---- sections ---- */
@@ -154,23 +153,55 @@
   .colophon nav { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
   .colophon nav a { font-size: 13px; min-height: 44px; display: inline-flex; align-items: center; transition: color .15s ease; }
 
-  /* ---- motion ---- */
-  .hl { animation: rise .6s var(--eo) both; }
-  .hl:nth-child(2) { animation-delay: .07s; }
-  .hl:nth-child(3) { animation-delay: .14s; }
-  .hero-mascot { animation: mascot-in .7s var(--eo) .25s both; }
-  .hero-meta, .hero-cue { animation: rise-sm .6s var(--eo) .38s both; }
-  @keyframes rise { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes rise-sm { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+  /* ---- motion ----
+     A11Y.md §3 Motion (SC 2.3.3, House Rule at every profile) + guide-media.md §5:
+     the reduced-motion path is the DEFAULT and motion is added in the
+     no-preference branch — written the other way round, the fallback is the
+     one nobody tests. Everything below this line is therefore additive:
+     with the preference set (or with CSS partially applied) the page is
+     already in its final, readable, static state.
+     The looping conveyor/cue are covered by EXCEPTIONS.md EXT-2026-001. */
+  /* The hero entrance animates TRANSFORM ONLY — deliberately no opacity.
+     These run with `fill-mode: both`, which holds the from-state whenever the
+     animation does not advance: a throttled background tab, a print render, or
+     any engine that skips animations. With opacity in the keyframes that state
+     is `opacity: 0`, so the hero copy and the primary CTA would simply be
+     absent — the §6 "Content Held Hostage" failure wearing a CSS costume
+     instead of a JS one. Sliding cannot hide anything, so it is safe by
+     construction. (The scroll reveals below may fade, because their hidden
+     state only exists once a script has confirmed it can undo it.) */
+  @keyframes rise { from { transform: translateY(40px); } to { transform: translateY(0); } }
+  @keyframes rise-sm { from { transform: translateY(18px); } to { transform: translateY(0); } }
   @keyframes mascot-in {
-    0% { opacity: 0; transform: rotate(1deg) translateY(-10px); }
-    70% { opacity: 1; transform: rotate(-7deg) translateY(0); }
-    100% { opacity: 1; transform: rotate(-6deg) translateY(0); }
+    0% { transform: rotate(1deg) translateY(-10px); }
+    70% { transform: rotate(-7deg) translateY(0); }
+    100% { transform: rotate(-6deg) translateY(0); }
   }
-  /* Reveals are opt-in: only hidden once JS confirms it can reveal them again. */
-  .js-reveal [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity .5s var(--eo), transform .5s var(--eo); }
-  .js-reveal [data-reveal].inview { opacity: 1; transform: translateY(0); }
-  .js-reveal [data-reveal="late"] { transition-delay: .09s; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .stripe-run { animation: conveyor 1.4s linear infinite; }
+    .cue-arrow { animation: cue 1.8s var(--eio) infinite; }
+    .hl { animation: rise .6s var(--eo) both; }
+    .hl:nth-child(2) { animation-delay: .07s; }
+    .hl:nth-child(3) { animation-delay: .14s; }
+    .hero-mascot { animation: mascot-in .7s var(--eo) .25s both; }
+    .hero-meta, .hero-cue { animation: rise-sm .6s var(--eo) .38s both; }
+
+    /* Scroll reveals. Doubly gated: the motion lives here, and the hiding
+       only applies once an inline pre-paint script confirms it can undo it
+       (A11Y.md §6 "Content Held Hostage by JavaScript"). Script blocked,
+       late or broken => content renders normally. */
+    .js-reveal [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity .5s var(--eo), transform .5s var(--eo); }
+    .js-reveal [data-reveal].inview { opacity: 1; transform: none; }
+    .js-reveal [data-reveal="late"] { transition-delay: .09s; }
+    .js-reveal [data-reveal="lateish"] { transition-delay: .045s; }
+  }
+
+  /* Lenis owns the scroll position while it runs; native smooth scrolling
+     fights it, so it is switched off only while Lenis is actually active. */
+  html.lenis-on { scroll-behavior: auto; }
+  html.lenis-on body { overscroll-behavior: none; }
+  html.lenis-on .lenis-content { min-height: 100%; }
 
   @media (hover: hover) and (pointer: fine) {
     a:hover { color: var(--green); }
@@ -200,12 +231,9 @@
     .colophon nav { flex-direction: column; align-items: flex-start; gap: 4px; }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    .hl, .hero-mascot, .hero-meta, .hero-cue { animation: none; }
-    .stripe-run, .cue-arrow { animation: none; }
-    .js-reveal [data-reveal] { transform: none; transition: opacity .25s ease; }
-  }
+  /* No `prefers-reduced-motion: reduce` block is needed any more: motion is
+     never applied by default, so "reduce" is simply the absence of the
+     no-preference branch above. */
 </style>
 <script>
   /* Arm scroll reveals only when we can actually un-hide them again. */
@@ -288,10 +316,10 @@
   </section>
 
   <section class="wrap sec" aria-labelledby="work-h">
-    <h2 class="tag" id="work-h">[ 02 &mdash; What we build ]</h2>
+    <h2 class="tag" id="work-h" data-reveal>[ 02 &mdash; What we build ]</h2>
     <div class="cards">
 
-      <article class="card card-desker" data-reveal>
+      <article class="card card-desker" data-reveal="lateish">
         <svg width="52" height="49" viewBox="-1 -1 14 13" shape-rendering="crispEdges" aria-hidden="true" focusable="false">
           <path fill="#C083C6" d="M0 0h12v1H0zM0 8h12v1H0zM0 1h1v7H0zM11 1h1v7h-1z"/>
           <rect x="1" y="1" width="10" height="7" fill="#121212"/>
@@ -341,6 +369,80 @@
   </nav>
 </footer>
 
+<script src="/lenis.min.js" defer></script>
+<script defer>
+/* Lenis smooth scroll — self-hosted, no CDN.
+
+   Accessibility contract (A11Y.md §3 Motion / guide-media.md §5):
+   - Scroll-driven motion is a vestibular trigger, so Lenis is OFF by default
+     and only starts under `prefers-reduced-motion: no-preference`. It also
+     stops live if the user flips the preference mid-session.
+   - Lenis takes ownership of scrollTop, which breaks two things the browser
+     normally does for free. Both are restored below:
+       1. Focus scrolling — tabbing to an off-screen control must bring it
+          into view (SC 2.4.7: focus must be visible).
+       2. In-page anchors — must both scroll AND move focus, or keyboard
+          users are scrolled somewhere their focus has not gone. */
+(function () {
+  var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var root = document.documentElement;
+  var lenis = null, rafId = 0;
+
+  function start() {
+    if (lenis || mq.matches || typeof Lenis === 'undefined') return;
+    lenis = new Lenis({
+      duration: 1.05,
+      smoothWheel: true,
+      // Never smooth touch: on a touchscreen it fights the platform's own
+      // physics and reads as lag, and it is a common motion-sickness report.
+      smoothTouch: false
+    });
+    root.classList.add('lenis-on');
+    (function raf(t) { if (!lenis) return; lenis.raf(t); rafId = requestAnimationFrame(raf); })(0);
+  }
+
+  function stop() {
+    if (!lenis) return;
+    cancelAnimationFrame(rafId);
+    lenis.destroy();
+    lenis = null;
+    root.classList.remove('lenis-on');
+  }
+
+  function sync() { mq.matches ? stop() : start(); }
+
+  // Keep an element visible when it receives focus. Without this, tabbing to
+  // an off-screen link leaves the focus ring outside the viewport.
+  document.addEventListener('focusin', function (e) {
+    if (!lenis) return;
+    var el = e.target;
+    if (!el || !el.getBoundingClientRect) return;
+    var r = el.getBoundingClientRect();
+    if (r.top < 0 || r.bottom > (window.innerHeight || 0)) {
+      lenis.scrollTo(el, { offset: -120, immediate: true });
+    }
+  });
+
+  // In-page anchors: scroll with Lenis, then hand focus to the destination so
+  // keyboard and screen-reader users actually land there.
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    var id = a.getAttribute('href');
+    if (!id || id === '#') return;
+    var target = document.querySelector(id);
+    if (!target) return;
+    if (lenis) { e.preventDefault(); lenis.scrollTo(target, { offset: -12 }); }
+    if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+    target.focus({ preventScroll: true });
+  });
+
+  if (mq.addEventListener) mq.addEventListener('change', sync);
+  else if (mq.addListener) mq.addListener(sync);
+  if (document.readyState === 'complete') sync();
+  else window.addEventListener('load', sync);
+})();
+</script>
 <script>
   (function () {
     var els = Array.prototype.slice.call(document.querySelectorAll('[data-reveal]'));
@@ -350,7 +452,13 @@
       els.forEach(function (el) { el.classList.add('inview'); });
       return;
     }
+    /* Backstops for guide-loading-skeleton.md's own test — "JS enabled but
+       throttled to a crawl: at no point may the page be blank while its
+       content sits in the DOM". An observer that never delivers would do
+       exactly that. */
+    var delivered = false;
     var io = new IntersectionObserver(function (entries) {
+      delivered = true;
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
           entry.target.classList.add('inview');
@@ -359,6 +467,19 @@
       });
     }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
     els.forEach(function (el) { io.observe(el); });
+
+    function show(el) { if (!el.classList.contains('inview')) { el.classList.add('inview'); io.unobserve(el); } }
+    function sweep() {
+      var vh = window.innerHeight || 0;
+      els.forEach(function (el) {
+        var r = el.getBoundingClientRect();
+        if (r.top < vh && r.bottom > 0) show(el);
+      });
+    }
+    function release() { if (!delivered) els.forEach(show); }
+
+    addEventListener('load', function () { sweep(); setTimeout(release, 2000); });
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) sweep(); });
   })();
 </script>
 
