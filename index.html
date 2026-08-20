@@ -199,9 +199,15 @@
 
   /* Lenis owns the scroll position while it runs; native smooth scrolling
      fights it, so it is switched off only while Lenis is actually active. */
-  html.lenis-on { scroll-behavior: auto; }
+  /* Lenis support CSS, keyed to what THIS build actually emits.
+     Checked against lenis.min.js 1.1.18: the only class it ever adds to <html>
+     is `lenis` — there is no `lenis-smooth` or `lenis-stopped` in this version,
+     so the stock lenis.css selectors that use them are dead here. */
+  html.lenis, html.lenis body { height: auto; }
+  html.lenis { scroll-behavior: auto !important; }   /* native smooth fights Lenis */
+  html.lenis [data-lenis-prevent] { overscroll-behavior: contain; }
+  html.lenis iframe { pointer-events: none; }
   html.lenis-on body { overscroll-behavior: none; }
-  html.lenis-on .lenis-content { min-height: 100%; }
 
   @media (hover: hover) and (pointer: fine) {
     a:hover { color: var(--green); }
@@ -391,11 +397,16 @@
   function start() {
     if (lenis || mq.matches || typeof Lenis === 'undefined') return;
     lenis = new Lenis({
-      duration: 1.05,
+      // lerp, not duration: duration restarts a ~1s eased animation on every
+      // wheel tick, which reads as floaty and disconnected on a long page.
+      // lerp is framerate-independent smoothing and tracks the wheel closely.
+      lerp: 0.11,
       smoothWheel: true,
-      // Never smooth touch: on a touchscreen it fights the platform's own
-      // physics and reads as lag, and it is a common motion-sickness report.
-      smoothTouch: false
+      wheelMultiplier: 1,
+      // syncTouch is the real option name in Lenis 1.x (`smoothTouch` was v0
+      // and is silently ignored). Off: on a touchscreen it fights the
+      // platform's own physics and is a common motion-sickness report.
+      syncTouch: false
     });
     root.classList.add('lenis-on');
     (function raf(t) { if (!lenis) return; lenis.raf(t); rafId = requestAnimationFrame(raf); })(0);

@@ -72,7 +72,8 @@
 :root[data-theme="dark"]{--ground:#0f0d13;--surface:#17141c;--elev:#1e1a26;--elev2:#241f2e;--line:rgba(176,114,182,.18);--line2:rgba(176,114,182,.09);--ink:#ECE8F0;--muted:#A99FB5;--faint:#8f849b;--plum:#C083C6;--plum-deep:#8E4B96;--gold:#E6B450;--good:#6FCF97;--bad:#EC7C86;--on-plum:#120e16}
 :root[data-theme="light"]{--ground:#F5F3F9;--surface:#FFFFFF;--elev:#FBFAFD;--elev2:#F1ECF7;--line:rgba(142,75,150,.20);--line2:rgba(142,75,150,.10);--ink:#1b1622;--muted:#655b71;--faint:#6b6175;--plum:#8E4B96;--plum-deep:#7a3d82;--gold:#8a6410;--good:#0e6e38;--bad:#c94d58;--on-plum:#FFFFFF}
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:76px}
+html{scroll-behavior:auto;scroll-padding-top:76px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
 body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16.5px;line-height:1.6;letter-spacing:.004em;
   background-image:radial-gradient(circle at 1px 1px,var(--line2) 1px,transparent 0);background-size:24px 24px;-webkit-font-smoothing:antialiased}
@@ -529,7 +530,14 @@ a:focus-visible,.btn:focus-visible,button:focus-visible,summary:focus-visible,.n
   html.js-reveal [data-reveal="later"]{transition-delay:.2s}
 }
 /* Lenis owns scrollTop while active; native smooth scrolling fights it. */
-html.lenis-on{scroll-behavior:auto}
+/* Lenis support CSS, keyed to what THIS build actually emits.
+   Checked against lenis.min.js 1.1.18: the only class it ever adds to <html>
+   is `lenis` — there is no `lenis-smooth` or `lenis-stopped` in this version,
+   so the stock lenis.css selectors that use them are dead here. */
+html.lenis,html.lenis body{height:auto}
+html.lenis{scroll-behavior:auto !important}      /* native smooth fights Lenis */
+html.lenis [data-lenis-prevent]{overscroll-behavior:contain}
+html.lenis iframe{pointer-events:none}
 html.lenis-on body{overscroll-behavior:none}
 </style>
 </head>
@@ -1148,10 +1156,13 @@ html.lenis-on body{overscroll-behavior:none}
 (function(){
   var mq=window.matchMedia('(prefers-reduced-motion: reduce)');
   var root=document.documentElement,lenis=null,rafId=0;
+  /* Lenis ignores scroll-padding-top, so anchor targets would land under the
+     sticky header. Measure it instead of hardcoding a guess. */
+  function headerOffset(){var h=document.querySelector('header');return (h?h.offsetHeight:0)+14}
 
   function start(){
     if(lenis||mq.matches||typeof Lenis==='undefined')return;
-    lenis=new Lenis({duration:1.05,smoothWheel:true,smoothTouch:false});
+    lenis=new Lenis({lerp:.11,smoothWheel:true,syncTouch:false,wheelMultiplier:1});
     root.classList.add('lenis-on');
     (function raf(t){if(!lenis)return;lenis.raf(t);rafId=requestAnimationFrame(raf)})(0);
   }
@@ -1168,7 +1179,7 @@ html.lenis-on body{overscroll-behavior:none}
     if(!lenis)return;
     var el=e.target;if(!el||!el.getBoundingClientRect)return;
     var r=el.getBoundingClientRect();
-    if(r.top<76||r.bottom>(window.innerHeight||0))lenis.scrollTo(el,{offset:-90,immediate:true});
+    if(r.top<headerOffset()||r.bottom>(window.innerHeight||0))lenis.scrollTo(el,{offset:-(headerOffset()+24),immediate:true});
   });
 
   /* Anchors must move FOCUS as well as scroll, or keyboard users are scrolled
@@ -1178,7 +1189,7 @@ html.lenis-on body{overscroll-behavior:none}
     if(!a)return;
     var id=a.getAttribute('href');if(!id||id==='#')return;
     var target=document.querySelector(id);if(!target)return;
-    if(lenis){e.preventDefault();lenis.scrollTo(target,{offset:-70})}
+    if(lenis){e.preventDefault();lenis.scrollTo(target,{offset:-headerOffset()})}
     if(!target.hasAttribute('tabindex'))target.setAttribute('tabindex','-1');
     target.focus({preventScroll:true});
   });
