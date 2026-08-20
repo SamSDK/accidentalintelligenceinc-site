@@ -926,14 +926,18 @@ html.lenis-on body{overscroll-behavior:none}
   // email at launch" and "unsubscribe anytime". A forwarder gives an inbox, not
   // a list - there would be nothing to unsubscribe from, and CASL (this is
   // operated from Canada) requires a working unsubscribe in commercial email.
-  var KIT_FORM_ID="";
+  var KIT_FORM_ID="9825346";
   var f=document.getElementById('waitlist'), note=document.getElementById('wlnote'), em=document.getElementById('email');
   f.addEventListener('submit',function(ev){
     ev.preventDefault();
     var v=(em.value||'').trim();
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){note.textContent='Error: please enter a valid email address.';note.style.color='var(--bad)';em.setAttribute('aria-invalid','true');return}
     em.removeAttribute('aria-invalid');
-    var done=function(){f.innerHTML='<div class="wl-ok">✓ You’re on the list — we’ll email you at launch.</div>';note.textContent='✓ You’re on the list — we’ll email you at launch.';note.style.color='var(--good)'};
+    // Double opt-in is on: the address is NOT subscribed until the person
+    // clicks the link in Kit's confirmation email. Saying "you're on the list"
+    // here would be false, and the ones who never click would silently think
+    // they were in.
+    var done=function(){f.innerHTML='<div class="wl-ok">✓ Almost there — check your email and click the confirm link.</div>';note.textContent='Check your email and click the confirm link to finish joining. Not there in a minute? Check spam.';note.style.color='var(--good)'};
     var fail=function(){note.textContent='Something went wrong — please try again.';note.style.color='var(--bad)'};
     // Honeypot. The field existed in the markup before but was never actually
     // consulted - the old handler built its FormData by hand and never sent or
@@ -944,7 +948,7 @@ html.lenis-on body{overscroll-behavior:none}
     if(KIT_FORM_ID){
       var fd=new FormData();
       fd.append('email_address',v);
-      fetch('https://app.convertkit.com/forms/'+KIT_FORM_ID+'/subscriptions',{method:'POST',headers:{Accept:'application/json'},body:fd})
+      fetch('https://app.kit.com/forms/'+KIT_FORM_ID+'/subscriptions',{method:'POST',headers:{Accept:'application/json'},body:fd})
         .then(function(r){if(!r.ok)throw 0;return r.json().catch(function(){return {}})})
         .then(function(j){if(j&&j.status&&j.status!=='success'&&j.status!=='quarantined')throw 0;done();})
         .catch(fail);
