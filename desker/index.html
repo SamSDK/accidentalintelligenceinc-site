@@ -42,7 +42,7 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"When does it launch?","acceptedAnswer":{"@type":"Answer","text":"Soon — what's left is code-signing the installer, so Windows doesn't warn you about an \"unknown publisher.\" I won't ship unsigned. Waitlist members get the download the moment it clears."}},
-{"@type":"Question","name":"What happens after I join the waitlist?","acceptedAnswer":{"@type":"Answer","text":"Exactly one email: the day Desker launches, you get the download link. No drip campaign, no \"just checking in.\" Unsubscribe is one click."}},
+{"@type":"Question","name":"What happens after I join the waitlist?","acceptedAnswer":{"@type":"Answer","text":"You will hear from me while Desker is being built, and you will get the download link the day it launches. No spam, no bullshit, no just-checking-in filler. Unsubscribe is one click."}},
 {"@type":"Question","name":"Do I need an account?","acceptedAnswer":{"@type":"Answer","text":"No account, ever — no username, no password, no login, no cloud. Desker runs fully offline and makes no network calls of its own. Nothing about how you use it leaves your machine."}},
 {"@type":"Question","name":"What's actually in Desker right now?","acceptedAnswer":{"@type":"Answer","text":"Unlimited live folder panels, desktop-icon zones, a dozen+ widgets (notes, to-do, clock, calendar, system monitors, quick-launch, clipboard history, and more), frosted-glass or lightweight rendering, dark/light themes, drag & drop, and dock-to-edge. It's meant to be genuinely useful — not a crippled demo."}},
 {"@type":"Question","name":"Does Desker collect any data?","acceptedAnswer":{"@type":"Answer","text":"No telemetry, no account, no cloud. Desker makes no network calls at all unless you opt in to the update check. Your setup stays on your machine."}},
@@ -847,13 +847,13 @@ html.lenis-on body{overscroll-behavior:none}
   <div class="dl">
     <span class="ey">Get early access</span>
     <h2 class="mt10" style="font-size:clamp(24px,3.6vw,34px)">Be the first to organize</h2>
-    <p class="sub center mt10" style="margin-inline:auto">Desker is in active development. Join the waitlist and you'll get the free download the moment it ships — plus Premium at <strong>$9.99 instead of $17.99</strong>, locked in for being here early. One email, that's it. No spam, no drip campaigns.</p>
+    <p class="sub center mt10" style="margin-inline:auto">Desker is in active development. Join the waitlist and you'll get the free download the moment it ships — plus Premium at <strong>$9.99 instead of $17.99</strong>, locked in for being here early. No spam, no bullshit &mdash; unsubscribe whenever you like.</p>
     <form class="wl" id="waitlist" novalidate>
       <input type="email" id="email" placeholder="you@email.com" aria-label="Email address" aria-describedby="wlnote" required>
       <input type="checkbox" name="botcheck" id="botcheck" style="display:none" tabindex="-1" autocomplete="off">
       <button class="btn btn-p" type="submit">Join the waitlist</button>
     </form>
-    <div class="wl-note" id="wlnote" role="status" aria-live="polite">One email at launch. $9.99 Premium pricing locked in the moment you join. Unsubscribe anytime. No account needed, ever.</div>
+    <div class="wl-note" id="wlnote" role="status" aria-live="polite">Build updates while it&rsquo;s being made, then the download link at launch. $9.99 Premium pricing locked in the moment you join. No spam, no bullshit &mdash; unsubscribe anytime. No account needed, ever.</div>
   </div>
 </div></section>
 
@@ -863,7 +863,7 @@ html.lenis-on body{overscroll-behavior:none}
   <div class="faq">
     <details open name="faq"><summary><span class="q">When does it launch?</span></summary><div class="a">Soon — what's left is code-signing the installer, so Windows doesn't warn you about an "unknown publisher." I won't ship unsigned. Waitlist members get the download the moment it clears.</div></details>
     <details name="faq"><summary><span class="q">Is there a discount for joining the waitlist?</span></summary><div class="a">Yes — join before Desker launches and Premium is $9.99 instead of $17.99, locked in for good. No fine print, no countdown gimmick: the price goes to $17.99 the day Lite Beta opens to everyone, and waitlist members keep $9.99 after that.</div></details>
-    <details name="faq"><summary><span class="q">What happens after I join the waitlist?</span></summary><div class="a">Exactly one email: the day Desker launches, you get the download link. No drip campaign, no "just checking in." Unsubscribe is one click.</div></details>
+    <details name="faq"><summary><span class="q">What happens after I join the waitlist?</span></summary><div class="a">You&rsquo;ll hear from me while Desker is being built &mdash; what shipped, what broke, what&rsquo;s next &mdash; and you&rsquo;ll get the download link the day it launches. No spam, no bullshit, no &ldquo;just checking in&rdquo; filler. Unsubscribe is one click.</div></details>
     <details name="faq"><summary><span class="q">Do I need an account?</span></summary><div class="a">No account, ever — no username, no password, no login, no cloud. Desker runs fully offline and makes no network calls of its own. Nothing about how you use it leaves your machine.</div></details>
     <details name="faq"><summary><span class="q">What's actually in Desker right now?</span></summary><div class="a">Unlimited live folder panels, desktop-icon zones, a dozen+ widgets (notes, to-do, clock, calendar, system monitors, quick-launch, clipboard history, and more), frosted-glass or lightweight rendering, dark/light themes, drag &amp; drop, and dock-to-edge. It's meant to be genuinely useful — not a crippled demo.</div></details>
     <details name="faq"><summary><span class="q">Does Desker collect any data?</span></summary><div class="a">No telemetry, no account, no cloud. Desker makes no network calls at all unless you opt in to the update check. Your setup stays on your machine.</div></details>
@@ -909,12 +909,24 @@ html.lenis-on body{overscroll-behavior:none}
   });
   document.getElementById('yr').textContent=new Date().getFullYear();
 
-  // waitlist (pre-launch). Web3Forms (web3forms.com) - set WEB3FORMS_ACCESS_KEY
-  // to the key from your form's dashboard. Free tier: 250 submissions/month.
-  // Endpoint/contract are Web3Forms' own (FormData + access_key + a hidden
-  // botcheck honeypot field) - verified 2026-08-09 against their live API
-  // reference docs, not assumed to match Formspree's JSON contract.
-  var WEB3FORMS_ACCESS_KEY="";
+  // Waitlist capture -> Kit (kit.com, formerly ConvertKit).
+  //
+  // Set KIT_FORM_ID to the numeric id in your form's embed code (Kit dashboard
+  // -> Grow -> Landing Pages & Forms -> your form -> Embed -> HTML; the id is
+  // the number in .../forms/<THIS>/subscriptions). It is NOT a secret: it is
+  // public in every Kit embed on the web.
+  //
+  // This deliberately uses Kit's public EMBED endpoint, not the v4 API
+  // (POST https://api.kit.com/v4/forms/{id}/subscribers). The v4 endpoint
+  // requires an X-Kit-Api-Key header, and any key pasted into a static page is
+  // readable by anyone who views source - Kit's own docs say it is not safe for
+  // client-side use. Verified against developers.kit.com, 2026-08-20.
+  //
+  // Why a list tool and not a form-to-email forwarder: the copy promises "one
+  // email at launch" and "unsubscribe anytime". A forwarder gives an inbox, not
+  // a list - there would be nothing to unsubscribe from, and CASL (this is
+  // operated from Canada) requires a working unsubscribe in commercial email.
+  var KIT_FORM_ID="";
   var f=document.getElementById('waitlist'), note=document.getElementById('wlnote'), em=document.getElementById('email');
   f.addEventListener('submit',function(ev){
     ev.preventDefault();
@@ -923,14 +935,18 @@ html.lenis-on body{overscroll-behavior:none}
     em.removeAttribute('aria-invalid');
     var done=function(){f.innerHTML='<div class="wl-ok">✓ You’re on the list — we’ll email you at launch.</div>';note.textContent='✓ You’re on the list — we’ll email you at launch.';note.style.color='var(--good)'};
     var fail=function(){note.textContent='Something went wrong — please try again.';note.style.color='var(--bad)'};
-    if(WEB3FORMS_ACCESS_KEY){
+    // Honeypot. The field existed in the markup before but was never actually
+    // consulted - the old handler built its FormData by hand and never sent or
+    // checked it, so it filtered nothing. Now it does: a bot that ticks a
+    // hidden checkbox gets the success state and no network call.
+    var bot=document.getElementById('botcheck');
+    if(bot&&bot.checked){done();return}
+    if(KIT_FORM_ID){
       var fd=new FormData();
-      fd.append('access_key',WEB3FORMS_ACCESS_KEY);
-      fd.append('email',v);
-      fd.append('subject','New Desker waitlist signup');
-      fetch('https://api.web3forms.com/submit',{method:'POST',headers:{Accept:'application/json'},body:fd})
-        .then(function(r){return r.json()})
-        .then(function(j){if(!j.success)throw 0;done();})
+      fd.append('email_address',v);
+      fetch('https://app.convertkit.com/forms/'+KIT_FORM_ID+'/subscriptions',{method:'POST',headers:{Accept:'application/json'},body:fd})
+        .then(function(r){if(!r.ok)throw 0;return r.json().catch(function(){return {}})})
+        .then(function(j){if(j&&j.status&&j.status!=='success'&&j.status!=='quarantined')throw 0;done();})
         .catch(fail);
     } else {
       // no capture endpoint wired yet — don't imply capture or show a false checkmark, but
